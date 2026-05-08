@@ -1,6 +1,11 @@
 ---
 name: codex-goal-handoff
-description: Use when delegating a long-horizon, multi-step engineering task (ticket → reproduction → targeted fix → branch/commit/merge → deploy → verification → report → ticket comment) to OpenAI Codex CLI's `/goal` Ralph loop. Generates the four durable spec files (Prompt.md, Plan.md, Implement.md, Documentation.md) using the official Codex objective vocabulary (Scope, Behavior, Non-goals, Verification + per-milestone Deliverable / Acceptance / Validation / Stop-and-fix), wires explicit HUMAN GATEs around irreversible actions, auto-enables the `goals` feature flag on first run, and hands off via the `codex-plugin-cc` bridge or direct `codex` invocation. Triggers (any language): "codex로 위임", "codex goal", "/goal", "ralph loop", "long-horizon task", "long-running task 자동화", "delegate to codex", "ticket → fix → deploy 자동화".
+description: >-
+  Use when delegating a long-horizon, multi-step engineering task to OpenAI
+  Codex CLI's /goal Ralph loop with durable specs, explicit human gates, and
+  verification evidence. Triggers include "codex로 위임", "codex goal",
+  "/goal", "ralph loop", "long-horizon task", "long-running task 자동화",
+  "delegate to codex", and "ticket to fix to deploy 자동화".
 ---
 
 # Codex Goal Handoff
