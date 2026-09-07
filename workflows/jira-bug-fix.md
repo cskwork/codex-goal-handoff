@@ -226,9 +226,9 @@ Then write `APPROVED:M-COMMENT — comment ID <id>` to `Documentation.md`. Codex
 
 ### M16 — Final audit
 
-Codex walks `Prompt.md §5 Verification` checklist (V1–V8). Each item must cite the `Documentation.md` heading containing **fresh** command output (re-run in this final iteration; stale output from 10 iterations ago does not count).
+Codex walks `Prompt.md §5 Verification` checklist (V1–V8). Each item must cite evidence for the final relevant state; re-run checks affected by changes or unresolved concerns, and never replay delivery mutations to refresh receipts.
 
-If any V-line cannot be cited from real fresh output, do **not** check it — mark the goal `unmet` and explain in `Documentation.md → Final audit`.
+If any V-line lacks adequate evidence, leave it unverified and explain in `Documentation.md → Final audit`; continue authorized verification or report the real blocker.
 
 ## Project-specific placeholders to fill before handoff
 

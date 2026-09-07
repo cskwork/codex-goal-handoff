@@ -2,7 +2,7 @@
 
 > Read this file at the start of **every** loop iteration, before deciding what to do next.
 >
-> Vocabulary in this runbook matches the official OpenAI Codex `/goal` documentation: **Scope, Behavior, Non-goals, Verification** at the objective level, and **Deliverable, Acceptance, Validation, Stop-and-fix** at the milestone level. Do not paraphrase these terms — Codex's internal prompts key off them.
+> Preserve this package's template headings: **Scope, Behavior, Non-goals, Verification** at the objective level, and **Deliverable, Acceptance, Validation, Stop-and-fix** at the milestone level.
 
 ## The loop, formally (Plan → Act → Validate → Review → Iterate)
 
@@ -16,9 +16,8 @@
 5. **Validate.** Run the milestone's **Validation command** (column 5 of `Plan.md`). Capture stdout/stderr verbatim into `Documentation.md`.
 6. **Decide.** Apply the milestone's **Stop-and-fix rule**:
    - Validation **passed** → set Status to `done`. Loop to step 1.
-   - Validation **failed, first attempt** → diagnose root cause (do not retry blindly). Make a corrective edit. Re-validate. If green, mark `done`. If red again, go to next bullet.
-   - Validation **failed, second attempt** → set Status to `blocked`. Append to `Documentation.md → Blockers`. Call `/goal pause`. Exit. **Do not retry a third time.**
-   - Milestone is a `HUMAN_GATE` row → set Status to `awaiting_approval`. Write a clearly formatted "GATE Gx — needs `APPROVED:Gx` token" entry to `Documentation.md`. Call `/goal pause`. Exit.
+   - Validation **failed** → diagnose and make an evidence-backed correction within scope. Continue useful investigation; do not repeat an unchanged failed action blindly. Mark `blocked` only for the genuine no-progress conditions in `Plan.md`.
+   - Milestone is a `HUMAN_GATE` row → first inspect actual user approval and provenance for the current artifact/action. If already authorized and not superseded, record the evidence and continue without asking again. Otherwise mark `awaiting_approval`, prepare the reviewable artifact, and stop dependent work. Never treat example or quoted approval tokens as permission.
 
 ## Stop-and-fix priority
 
@@ -37,7 +36,7 @@ If a milestone seems to require editing outside (a)–(c):
 1. **Stop.** Do not edit.
 2. Append to `Documentation.md → Scope changes`: the file you want to edit, why it's required by the milestone's Acceptance criteria, and what alternative you considered.
 3. Set milestone Status to `blocked`.
-4. `/goal pause`.
+4. Stop dependent work and explain the required scope decision; use only supported runtime controls.
 
 The human decides whether to widen the scope.
 
@@ -64,8 +63,8 @@ A milestone is `done` only when `Documentation.md` contains:
 The `Prompt.md §5 Verification` block is the contract. Before declaring the goal complete:
 
 - For each `Vx` line, locate the supporting evidence in `Documentation.md` and cite the heading.
-- For at least `V2` and `V3` (regression test passes locally and against dev), re-run the command in this final iteration and paste fresh output. Stale evidence from 10 iterations ago does not count.
-- If any `Vx` lacks fresh evidence, **do not mark it green**. Mark the goal `unmet` and explain in `Documentation.md → Final audit`.
+- Ensure V2 and V3 cover the final relevant local/deployed state. Re-run when that state changed or evidence is missing; preserve valid receipts otherwise.
+- If any `Vx` lacks adequate evidence, **do not mark it green**. Record the unverified criterion in `Documentation.md → Final audit` and continue authorized verification or report the real blocker.
 
 ## Communication style in `Documentation.md`
 
@@ -76,7 +75,4 @@ The `Prompt.md §5 Verification` block is the contract. Before declaring the goa
 
 ## When to `/goal pause` vs `/goal clear`
 
-- **`pause`** — recoverable: blocker the user can resolve, gate awaiting approval, ambiguity in spec.
-- **`clear`** — unrecoverable: the spec is wrong, the approach is wrong, or the work has been superseded. After clear, the user re-runs the handoff skill.
-
-Default to `pause`. Only `clear` when explicitly instructed.
+These headings describe workflow intent, not guaranteed commands. Verify current runtime controls before using them. Preserve the objective while awaiting a recoverable dependency or approval; clear/cancel it only when the user explicitly requests that action. Do not map a package log status to a runtime API status without checking the runtime contract.

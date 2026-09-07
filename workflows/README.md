@@ -33,7 +33,7 @@ Every workflow file MUST contain these sections:
 
 This skill keeps tight alignment with the official OpenAI Codex `/goal` documentation. When writing a workflow file:
 
-- **Objective-level sections** in `Prompt.md` are always: `Scope`, `Behavior`, `Non-goals`, `Verification`. Don't rename to "Goals," "Acceptance," "Constraints," "Done When." Codex's continuation prompts key off these exact words.
+- **Objective-level sections** in `Prompt.md` are always: `Scope`, `Behavior`, `Non-goals`, `Verification`. Don't rename to "Goals," "Acceptance," "Constraints," "Done When." These are this package's stable template headings, not runtime parser keywords.
 - **Milestone-level columns** in `Plan.md` are always: `Deliverable`, `Acceptance criteria`, `Validation command`, `Stop-and-fix`, `HUMAN_GATE`. Don't merge "Acceptance" into "Validation" — they are different things (one is the property to verify; the other is the command that verifies it).
 - **Gate tokens** are always `APPROVED:Gx` / `REJECTED:Gx` (capital A, capital REJECTED, capital G, integer). Don't lowercase. Codex grep is case-sensitive and the templates rely on exact match.
 
@@ -43,9 +43,9 @@ Each milestone row in `Plan.md` must satisfy all five:
 
 1. **One Deliverable.** A milestone produces one artifact. If you're writing two, split into two milestones.
 2. **Observable Acceptance.** The Acceptance must be checkable from outside the agent (file exists, exit code, response body, screenshot present). Internal state ("Codex understands the issue") is not acceptable.
-3. **Mechanical Validation.** The Validation command must be a real shell command with a real `exit 0` semantic. No "the agent is satisfied" or "tests look good." If you can't write the command, the milestone is not ready.
-4. **Stop-and-fix is uniform.** Apply the same rule from `templates/Plan.md`: first failure -> root-cause-fix once; second consecutive failure -> `blocked` + `/goal pause`. Don't write a milestone that needs three retries.
-5. **Gates are wait-states.** A `HUMAN_GATE` row's Deliverable is *only* "user has approved Gx." Its Validation is *only* `grep -F "APPROVED:Gx" Documentation.md`. Don't pile other work into a gate row.
+3. **Concrete Validation.** Use read-only commands for machine-checkable facts and explicit artifact review for semantic criteria. Exit 0 or file existence alone does not prove content. Keep delivery actions out of the validation column.
+4. **Stop-and-fix is uniform.** Apply `templates/Plan.md`: diagnose failures, continue evidence-backed in-scope corrections, and stop dependent work when a genuine blocker prevents useful progress.
+5. **Gates check authorization.** A `HUMAN_GATE` row verifies actual user approval of the current artifact/action and its recorded provenance. Grep only locates records; quoted examples are not approval. Continue an already authorized action without re-asking. Prepare the artifact before requesting missing approval.
 
 ## Number-of-gates heuristic
 

@@ -2,7 +2,7 @@
 
 > **Frozen.** Codex must treat this file as read-only. Edits require explicit human approval recorded in `Documentation.md`.
 >
-> The four sections below — **Scope, Behavior, Non-goals, Verification** — match the OpenAI Codex `/goal` objective-quality vocabulary verbatim. Codex prompts key off these exact words; do not rename them.
+> Keep **Scope, Behavior, Non-goals, Verification** as this package's stable template headings; they are not runtime parser keywords.
 
 ## 0. Single-sentence objective
 
@@ -59,12 +59,12 @@ If the fix logically requires editing outside this scope, Codex must **stop**, w
 - **N4.** Do not push to `{{BASE_BRANCH}}` directly. Ever.
 - **N5.** Do not `--force` push, `--no-verify`, or `git reset --hard` on a branch with unpushed user work.
 - **N6.** Do not use mocks for the integration verification step (M8/M13) — must hit a real local or deployed server.
-- **N7.** Do not advance past any `HUMAN_GATE` row in `Plan.md` without a matching `APPROVED:Gx` token in `Documentation.md`.
+- **N7.** Do not advance past any `HUMAN_GATE` row in `Plan.md` without actual user approval covering its current artifact/action, recorded with provenance under `APPROVED:Gx` in `Documentation.md`.
 - **N8.** Do not declare the goal complete on proxy signals ("tests should pass", "the fix is in place"). Verification §5 demands real command output.
 
 ## 5. Verification
 
-> Concrete commands whose green output proves the goal achieved. Codex must run **every** command in this section in the final iteration before claiming completion, capturing fresh output into `Documentation.md → Final audit`. Stale output from earlier iterations does not count.
+> Match every criterion to evidence for the final relevant revision/environment. Re-run checks affected by changes or unresolved concerns; reuse valid evidence otherwise. Record commands, outcomes, and provenance in `Documentation.md → Final audit`. Never repeat an external mutation to refresh a verification receipt.
 
 ```
 V1. git log {{BASE_BRANCH}}..{{TICKET_TYPE}}/{{TICKET_ID}} --oneline
@@ -86,25 +86,16 @@ V5. test -s .codex-goals/{{TICKET_ID}}/screenshots/as-is.png \
 V6. test -s .codex-goals/{{TICKET_ID}}/report.pdf
     # Expect: PDF exists, embeds both screenshots, summarizes root cause + fix + verification + commit SHAs + deploy build #.
 
-V7. grep -F "APPROVED:G1" .codex-goals/{{TICKET_ID}}/Documentation.md \
-    && grep -F "APPROVED:G2" .codex-goals/{{TICKET_ID}}/Documentation.md \
-    && grep -F "APPROVED:G3" .codex-goals/{{TICKET_ID}}/Documentation.md \
-    && grep -F "APPROVED:G4" .codex-goals/{{TICKET_ID}}/Documentation.md
-    # Expect: all four human gates approved.
+V7. Review the actual user approval and provenance for G1, G2, G3, and G4.
+    # Expect: each approval covers the current artifact/action, with no superseding rejection.
+    # Example or quoted APPROVED:Gx tokens are not authorization.
 
 V8. (orchestrator-side) Ticket comment posted with merge SHA, build URL, PDF link.
     # Recorded as "APPROVED:M-COMMENT — comment ID: <id>" in Documentation.md.
 ```
 
-**Done when:** every command V1–V8 has been re-run in the final iteration, exited 0 (or recorded the expected artifact), and its fresh output appears in `Documentation.md → Final audit` with timestamps.
+**Done when:** every item V1–V8 has evidence for the final relevant state in `Documentation.md → Final audit`, including timestamps and any required review of artifact content.
 
 ## 6. Escalation contract
 
-If Codex cannot make progress after **two** consecutive Ralph-loop iterations on the same milestone:
-
-1. Append to `Documentation.md → Blockers`:
-   - Milestone ID
-   - Commands tried, file edits made
-   - Failure output verbatim
-   - What the human needs to provide (data, decision, access, scope expansion)
-2. Call `/goal pause` and exit. Do not invent workarounds. Do not "try a different approach" without first surfacing the blocker.
+When a real dependency, missing authorization, or repeated identical failure prevents useful in-scope progress, append the milestone, attempts, evidence, and needed decision/access to `Documentation.md → Blockers`. Stop dependent work and explain the blocker. A different evidence-backed approach within scope is allowed; a fixed number of failed tests alone is not a reason to give up. Use only the installed runtime's supported goal controls.

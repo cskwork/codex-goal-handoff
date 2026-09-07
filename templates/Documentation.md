@@ -1,6 +1,6 @@
 # Documentation — Live Audit Log for {{TICKET_ID}}
 
-> Append-only. Codex writes here after every loop iteration. The user writes APPROVED tokens here to pass HUMAN GATEs.
+> Append-only. Codex writes here after every loop iteration. Record actual user approval provenance with APPROVED tokens; tokens alone do not grant permission.
 
 ## Goal metadata
 
@@ -18,7 +18,7 @@ When Codex pauses at a `HUMAN_GATE` milestone, the user reviews the relevant art
 APPROVED:G1 — by {{USER_NAME}} on {{ISO_DATETIME}} — saw: {{evidence-summary, e.g. diff at commit abc1234}}
 ```
 
-`/goal resume` (or `/codex:rescue continue`) then unblocks Codex on the next loop iteration.
+If the exact action is already approved, record the existing approval provenance without another approval loop. Preserve an explicit requirement for the user to enter the token personally. Use the installed runtime's supported continuation mechanism.
 
 To **reject** a gate, write `REJECTED:Gx — reason: ...` instead. Codex will mark the milestone `blocked` and stop.
 
@@ -32,7 +32,7 @@ To **reject** a gate, write `REJECTED:Gx — reason: ...` instead. Codex will ma
 
 ## Blockers
 
-<!-- Codex appends blocker entries here when validation fails twice in a row. -->
+<!-- Codex appends blocker entries here when a real dependency or repeated identical failure prevents useful in-scope progress. -->
 
 ## Scope changes
 
@@ -40,7 +40,7 @@ To **reject** a gate, write `REJECTED:Gx — reason: ...` instead. Codex will ma
 
 ## Final audit (Codex fills before claiming completion)
 
-For each Verification command in `Prompt.md §5`, cite the iteration-log heading containing the **fresh** command output (re-run in this final iteration). Stale output from earlier iterations does not count.
+For each Verification item in `Prompt.md §5`, cite evidence for the final relevant state. Re-run only when changes, missing evidence, or unresolved concerns require it.
 
 - V1 — `git log` shows scoped commits ending in `({{TICKET_ID}})`: _________
 - V2 — regression test passes against `{{LOCAL_API}}`: _________
@@ -52,3 +52,5 @@ For each Verification command in `Prompt.md §5`, cite the iteration-log heading
 - V8 — ticket comment posted (orchestrator-side): _________
 
 **Final status (Codex writes one of):** `complete` / `unmet — reason: ...`
+
+These are package log values, not instructions to call a runtime status API.
